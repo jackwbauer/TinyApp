@@ -7,8 +7,10 @@
     <% include ./partials/_header %>
   </header>
   <body>
-    <% for(var url in urls) {  %>
-      <li><%= url %> - <%= urls[url] %></li>
-    <% }; %>
+    <ul>
+      <% for(var url in urls) {  %>
+        <li><%= url %> - <%= urls[url] %></li>
+      <% }; %>
+    </ul>
   </body>
 </html>

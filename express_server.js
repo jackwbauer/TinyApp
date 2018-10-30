@@ -42,9 +42,10 @@ app.get("/urls.json", (request, response) => {
   response.json(urlDatabase);
 });
 
-// app.get("/hello", (request, response) => {
-//   response.send("<html><body>Hello <b>World</b></body></html>\n");
-// });
+app.get("/u/:shortURL", (request, response) => {
+  let longURL = urlDatabase[request.params.shortURL];
+  response.redirect(longURL);
+});
 
 app.post("/urls", (request, response) => {
   let short = generateRandomString();
