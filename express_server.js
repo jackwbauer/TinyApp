@@ -43,14 +43,18 @@ app.get("/urls.json", (request, response) => {
 });
 
 app.get("/u/:shortURL", (request, response) => {
-  let longURL = urlDatabase[request.params.shortURL];
-  response.redirect(longURL);
+  if(urlDatabase[request.params.shortURL]) {
+    let longURL = urlDatabase[request.params.shortURL];
+    response.redirect(longURL);
+  } else {
+    let templateVars = { shortURL : request.params.shortURL };
+    response.render("urls_doesNotExist", templateVars);
+  }
 });
 
 app.post("/urls", (request, response) => {
   let short = generateRandomString();
   urlDatabase[short] = request.body.longURL;
-  console.log(urlDatabase);
   response.redirect(`http://localhost:8080/urls/${short}`);
 });
 
