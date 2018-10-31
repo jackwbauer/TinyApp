@@ -9,7 +9,7 @@
   <body>
     <ul>
       <% for(var url in urls) {  %>
-        <form method="POST" action="/urls/9sm5xK/delete">
+        <form method="POST" action=<%=`/urls/${url}/delete`%>>
           <li><%= url %> - <%= urls[url] %> <button>DELETE</button> </li>
         </form>
       <% }; %>
