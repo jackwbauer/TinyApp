@@ -97,9 +97,9 @@ app.post("/urls/:id/delete", (request,response) => {
 app.post("/register", (request, response) => {
   if(request.body.email && request.body.password) {
     for(let user in users) {
-      if(user.email === request.body.email) {
+      if(users[user].email === request.body.email) {
         response.status(403);
-        response.send('403: Username and password both require a value');
+        response.send('403: Email is already registered.');
         return;
       }
     }
@@ -108,6 +108,7 @@ app.post("/register", (request, response) => {
     console.log(users);
     response.cookie('user_id', newId);
     response.redirect('/urls');
+    return;
   }
   response.status(403);
   response.send('403: Username and password both require a value');
