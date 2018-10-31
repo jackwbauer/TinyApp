@@ -2,7 +2,6 @@ var express = require("express");
 var app = express();
 const bodyParser = require("body-parser");
 var PORT = 8080;
-var urlBase = `http://localhost:${PORT}`;
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
@@ -56,12 +55,12 @@ app.get("/u/:shortURL", (request, response) => {
 app.post("/urls", (request, response) => {
   let short = generateRandomString();
   urlDatabase[short] = request.body.longURL;
-  response.redirect(`http://localhost:8080/urls/${short}`);
+  response.redirect(`/urls`);
 });
 
 app.post("/urls/:id/delete", (request,response) => {
   delete urlDatabase[request.params.id];
-  response.redirect('http://localhost:8080/urls');
+  response.redirect('/urls');
 });
 
 app.listen(PORT, () => {
