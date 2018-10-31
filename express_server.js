@@ -52,7 +52,7 @@ app.get("/u/:shortURL", (request, response) => {
     let longURL = urlDatabase[request.params.shortURL];
     response.redirect(longURL);
   } else {
-    let templateVars = { shortURL : request.params.shortURL, username: request.cookies["username"]};
+    let templateVars = { shortURL : request.params.shortURL };
     response.render("urls_doesNotExist", templateVars);
   }
 });
@@ -77,7 +77,14 @@ app.post("/urls/:id/delete", (request,response) => {
 });
 
 app.post("/login", (request, response) => {
-  response.cookie('username', request.body.username);
+  if(request.body.username) {
+    response.cookie('username', request.body.username);
+  }
+  response.redirect('/urls');
+});
+
+app.post('/logout', (request, response) => {
+  response.clearCookie('username');
   response.redirect('/urls');
 });
 

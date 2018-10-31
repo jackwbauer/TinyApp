@@ -1,9 +1,14 @@
 <!DOCTYPE html>
-<form method="POST" action="/login">
-  <% if(username) { %>
-    <h2><%=username%></h2>
-  <% } else { %>
-  <input id="username" type="text" name="username" style="width: 150px">
-  <input type="submit" text="Login">
-  <% } %>
-</form>
+<% if(username) { %>
+<h2><%=username%>
+  <form method="POST" action="/logout">
+    <input type="submit" value="Logout">
+  </form>
+</h2>
+
+<% } else { %>
+  <form method="POST" action="/login">
+    <input id="username" type="text" name="username" style="width: 150px">
+    <input type="submit" value="Login">
+  </form>
+<% } %>
