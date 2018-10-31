@@ -35,7 +35,10 @@ app.get("/urls/new", (request, response) => {
 
 app.get("/urls/:id", (request, response) => {
   let templateVars = { shortURL: request.params.id, urls: urlDatabase};
+  if(urlDatabase[request.params.id]) {
   response.render("urls_show", templateVars);
+  }
+  response.render("urls_doesNotExist", templateVars);
 });
 
 app.get("/urls.json", (request, response) => {
