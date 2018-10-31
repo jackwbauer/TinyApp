@@ -7,15 +7,18 @@
     <% include ./partials/_header %>
   </header>
   <body>
-    <ul style = "list-style-type: none">
+    <table>
       <% for(var url in urls) {  %>
         <form method="POST" action=<%=`/urls/${url}/delete`%>>
-          <li>
-            <%= url %> &#8594 <a href=<%= urls[url]%>> <%= urls[url] %> </a> &nbsp;
-            <input type="submit" value="Delete"><br><br>
-          </li>
+          <tr>
+            <td><%= url %></td>
+            <td>&#8594</td>
+            <td><a href=<%= urls[url]%>> <%= urls[url] %> </a></td>
+            <td><a href=<%=`/urls/${url}`%>>Edit</a></td>
+            <td><input type="submit" value="Delete"></td>
+          </tr>
         </form>
       <% }; %>
-    </ul>
+  </table>
   </body>
 </html>
