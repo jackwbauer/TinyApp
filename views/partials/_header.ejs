@@ -1,1 +1,9 @@
-<header></header>
+<!DOCTYPE html>
+<form method="POST" action="/login">
+  <% if(username) { %>
+    <h2><%=username%></h2>
+  <% } else { %>
+  <input id="username" type="text" name="username" style="width: 150px">
+  <input type="submit" text="Login">
+  <% } %>
+</form>

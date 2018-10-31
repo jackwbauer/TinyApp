@@ -27,7 +27,7 @@ app.get("/", (request, response) => {
 });
 
 app.get("/urls", (request, response) => {
-  let templateVars = { urls: urlDatabase};
+  let templateVars = { urls: urlDatabase, username: request.cookies["username"]};
   response.render("urls_index", templateVars);
 });
 
@@ -36,7 +36,7 @@ app.get("/urls/new", (request, response) => {
 });
 
 app.get("/urls/:id", (request, response) => {
-  let templateVars = { shortURL: request.params.id, urls: urlDatabase};
+  let templateVars = { shortURL: request.params.id, urls: urlDatabase, username: request.cookies["username"]};
   if(urlDatabase[request.params.id]) {
   response.render("urls_show", templateVars);
   }
@@ -52,13 +52,12 @@ app.get("/u/:shortURL", (request, response) => {
     let longURL = urlDatabase[request.params.shortURL];
     response.redirect(longURL);
   } else {
-    let templateVars = { shortURL : request.params.shortURL };
+    let templateVars = { shortURL : request.params.shortURL, username: request.cookies["username"]};
     response.render("urls_doesNotExist", templateVars);
   }
 });
 
 app.post("/urls/:id", (request, response) => {
-  // console.log('here');
   urlDatabase[request.params.id] = request.body.newURL;
   response.redirect('/urls');
 });
@@ -74,6 +73,11 @@ app.post("/urls/:id/delete", (request,response) => {
   if(urlDatabase[request.params.id]) {
     delete urlDatabase[request.params.id];
   }
+  response.redirect('/urls');
+});
+
+app.post("/login", (request, response) => {
+  response.cookie('username', request.body.username);
   response.redirect('/urls');
 });
 
