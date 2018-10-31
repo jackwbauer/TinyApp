@@ -95,11 +95,22 @@ app.post("/urls/:id/delete", (request,response) => {
 });
 
 app.post("/register", (request, response) => {
-  const newId = generateRandomString();
-  users[newId] = { id : newId, email : request.body.email, password : request.body.password };
-  console.log(users);
-  response.cookie('user_id', newId);
-  response.redirect('/urls');
+  if(request.body.email && request.body.password) {
+    for(let user in users) {
+      if(user.email === request.body.email) {
+        response.status(403);
+        response.send('403: Username and password both require a value');
+        return;
+      }
+    }
+    const newId = generateRandomString();
+    users[newId] = { id : newId, email : request.body.email, password : request.body.password };
+    console.log(users);
+    response.cookie('user_id', newId);
+    response.redirect('/urls');
+  }
+  response.status(403);
+  response.send('403: Username and password both require a value');
 });
 
 app.post("/login", (request, response) => {
