@@ -1,10 +1,12 @@
 var express = require("express");
 var app = express();
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 var PORT = 8080;
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 
 function generateRandomString() {
   let random = "";
@@ -76,5 +78,5 @@ app.post("/urls/:id/delete", (request,response) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`Listening on port ${PORT}!`);
 });
