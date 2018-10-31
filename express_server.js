@@ -52,14 +52,23 @@ app.get("/u/:shortURL", (request, response) => {
   }
 });
 
+app.post("/urls/:id", (request, response) => {
+  // console.log('here');
+  urlDatabase[request.params.id] = request.body.newURL;
+  response.redirect('/urls');
+});
+
 app.post("/urls", (request, response) => {
   let short = generateRandomString();
   urlDatabase[short] = request.body.longURL;
-  response.redirect(`/urls`);
+  response.redirect('/urls');
 });
 
+
 app.post("/urls/:id/delete", (request,response) => {
-  delete urlDatabase[request.params.id];
+  if(urlDatabase[request.params.id]) {
+    delete urlDatabase[request.params.id];
+  }
   response.redirect('/urls');
 });
 
