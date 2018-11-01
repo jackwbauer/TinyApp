@@ -84,6 +84,7 @@ app.get("/register", (request, response) => {
 
 app.get("/login", (request, response) => {
   let templateVars = { user: getUserFromEmail(response.email)};
+  console.log("here get");
   response.render("login");
 });
 
@@ -128,14 +129,27 @@ app.post("/register", (request, response) => {
     return;
   }
   response.status(403);
-  response.send('403: Username and password both require a value');
+  response.send('403: Email and password both require a value');
 });
 
 app.post("/login", (request, response) => {
   var user = getUserFromEmail(request.body.email);
-  if(request.body.email && request.body.password) {
-    response.cookie('user_id', user.id);
+  if(!request.body.email || !request.body.password) {
+    response.status(403);
+    response.send('403: Email and password both require a value');
+    return;
   }
+  if(!user) {
+    response.status(403);
+    response.send('403: Email is not registered.');
+    return;
+  }
+  if(request.body.password !== user.password) {
+    response.status(403);
+    response.send('403: Invalid email and password combination.');
+    return;
+  }
+  response.cookie('user_id', user.id);
   response.redirect('/urls');
 });
 
