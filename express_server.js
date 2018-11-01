@@ -53,7 +53,12 @@ app.get("/urls", (request, response) => {
 });
 
 app.get("/urls/new", (request, response) => {
-  response.render("urls_new");
+  let templateVars = { user: users[request.cookies["user_id"]]};
+  if(request.cookies["user_id"]) {
+    response.render("urls_new", templateVars);
+  } else {
+    response.redirect('/login');
+  }
 });
 
 app.get("/urls/:id", (request, response) => {
@@ -84,7 +89,6 @@ app.get("/register", (request, response) => {
 
 app.get("/login", (request, response) => {
   let templateVars = { user: getUserFromEmail(response.email)};
-  console.log("here get");
   response.render("login");
 });
 
