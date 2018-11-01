@@ -17,6 +17,14 @@ function generateRandomString() {
   return random;
 }
 
+function getUserFromEmail(email) {
+  for(let id in users) {
+    if(users[id].email == email) {
+      return users[id];
+    }
+  }
+}
+
 const users = {
   "userRandomID": {
     id: "userRandomID",
@@ -40,7 +48,7 @@ app.get("/", (request, response) => {
 });
 
 app.get("/urls", (request, response) => {
-  let templateVars = { urls: urlDatabase, username: request.cookies["username"]};
+  let templateVars = { urls: urlDatabase, user: users[request.cookies["user_id"]]};
   response.render("urls_index", templateVars);
 });
 
@@ -49,7 +57,7 @@ app.get("/urls/new", (request, response) => {
 });
 
 app.get("/urls/:id", (request, response) => {
-  let templateVars = { shortURL: request.params.id, urls: urlDatabase, username: request.cookies["username"]};
+  let templateVars = { shortURL: request.params.id, urls: urlDatabase, user: users[request.cookies["user_id"]]};
   if(urlDatabase[request.params.id]) {
   response.render("urls_show", templateVars);
   }
@@ -72,6 +80,16 @@ app.get("/u/:shortURL", (request, response) => {
 
 app.get("/register", (request, response) => {
   response.render("register");
+});
+
+app.get("/login", (request, response) => {
+  let templateVars = { user: getUserFromEmail(response.email)};
+  response.render("login");
+});
+
+app.get("/logout", (request, response) => {
+  response.clearCookie('user_id');
+  response.redirect('/urls');
 });
 
 app.post("/urls/:id", (request, response) => {
@@ -105,7 +123,6 @@ app.post("/register", (request, response) => {
     }
     const newId = generateRandomString();
     users[newId] = { id : newId, email : request.body.email, password : request.body.password };
-    console.log(users);
     response.cookie('user_id', newId);
     response.redirect('/urls');
     return;
@@ -115,14 +132,15 @@ app.post("/register", (request, response) => {
 });
 
 app.post("/login", (request, response) => {
-  if(request.body.username) {
-    response.cookie('username', request.body.username);
+  var user = getUserFromEmail(request.body.email);
+  if(request.body.email && request.body.password) {
+    response.cookie('user_id', user.id);
   }
   response.redirect('/urls');
 });
 
 app.post('/logout', (request, response) => {
-  response.clearCookie('username');
+  response.clearCookie('user_id');
   response.redirect('/urls');
 });
 
