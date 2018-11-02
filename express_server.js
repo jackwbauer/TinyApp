@@ -3,11 +3,13 @@ const app = express();
 const bodyParser = require("body-parser");
 const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
+const methodOverride = require("method-override");
 require('dotenv').config();
 const PORT = 8080;
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(methodOverride('_method'));
 app.use(cookieSession({
   name: 'session',
   secret: process.env.SECRETKEY,
@@ -141,7 +143,7 @@ app.get("/logout", (request, response) => {
   response.redirect('/urls');
 });
 
-app.post("/urls/:id", (request, response) => {
+app.put("/urls/:id", (request, response) => {
   urlDatabase[request.params.id].url = request.body.newURL;
   response.redirect('/urls');
 });
@@ -159,7 +161,7 @@ app.post("/urls", (request, response) => {
   }
 });
 
-app.post("/urls/:id/delete", (request,response) => {
+app.delete("/urls/:id/delete", (request,response) => {
   const userURLs = getURLsFromUserId(users[request.session.user_id].id);
   if(userURLs[request.params.id]) {
     delete urlDatabase[request.params.id];
