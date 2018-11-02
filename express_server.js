@@ -54,6 +54,20 @@ function checkDatabaseForURL(url) {
   return '';
 }
 
+function numVisits(shortURL) {
+  return urlDatabase[shortURL].visits.length;
+}
+
+function numUniqueVisitors(shortURL) {
+  let uniques = [];
+  urlDatabase[shortURL].visits.forEach((visit) => {
+    if(!uniques.includes(visit.visitor_id)) {
+      uniques.push(visit.visitor_id);
+    }
+  });
+  return uniques.length;
+}
+
 const users = {
   "userRandomID": {
     id: "userRandomID",
@@ -71,10 +85,12 @@ let urlDatabase = {
   "b2xVn2" : {
     user_id : "userRandomID",
     url : "http://lighthouselabs.ca",
+    visits : [{1 : 'march 3'}],
   },
   "9sm5xK" : {
     user_id : "user2RandomID",
     url: "http://www.google.com", 
+    visits : [],
   },
 };
 
@@ -105,7 +121,12 @@ app.get("/urls/:id", (request, response) => {
     response.redirect('/login');
   }
   const userURLs = getURLsFromUserId(request.session.user_id);
-  let templateVars = { shortURL: request.params.id, urls: userURLs, user: users[request.session.user_id]};
+  let templateVars = { shortURL: request.params.id,
+    urls: userURLs,
+    user: users[request.session.user_id],
+    visits : urlDatabase[request.params.id].visits,
+    uniqueVisits : numUniqueVisitors(request.params.id),
+  };
   if(userURLs[request.params.id]) {
     response.render("urls_show", templateVars);
   } else if(urlDatabase[request.params.id]) {
@@ -118,6 +139,8 @@ app.get("/urls/:id", (request, response) => {
 app.get("/u/:shortURL", (request, response) => {
   if(urlDatabase[request.params.shortURL]) {
     let longURL = urlDatabase[request.params.shortURL].url;
+    const visitor_id = request.session.user_id; //TODO also generate visitor_id session
+    urlDatabase[request.params.shortURL].visits.push({ visitor_id, timestamp : new Date() });
     response.redirect(longURL);
   } else {
     let templateVars = { shortURL : request.params.shortURL, user : users[request.session.user_id] };
@@ -156,7 +179,8 @@ app.post("/urls", (request, response) => {
       return;
     }
     short = generateRandomString();
-    urlDatabase[short] = { user_id : users[request.session.user_id].id, url : request.body.longURL};
+    urlDatabase[short] = { user_id : users[request.session.user_id].id, url : request.body.longURL, visits : [] };
+    console.log(urlDatabase[short]);
     response.redirect(`/urls/${short}`);
   }
 });

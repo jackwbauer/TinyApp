@@ -13,5 +13,19 @@
       <input id="newURL" type="text" name="newURL" placeholder=<%=urls[shortURL].url%> style="width: 300px">
       <input type="submit" value="Update">
     </form>
+    <h2>Visitors: <%= visits.length %></h2>
+    <h2>Unique visitors: <%= uniqueVisits %></h2>
+    <table>
+      <% visits.forEach((visit) => { %>
+        <tr>
+          <td>
+            Visitor ID: <%= visit.visitor_id %>
+          </td>
+          <td>
+            Timestamp: <%= visit.timestamp %>
+          </td>
+        </tr>
+      <% }); %>
+    </table>
   </body>
 </html>
