@@ -5,9 +5,10 @@
     <title>TinyApp</title>
   </head>
   <body>
-    <form method="POST" action="/register">
-      E-Mail: <input id="email" type="email" name="email" style="width: 150px"><br><br>
-      Password: <input id="password" type="password" name="password" style="width: 150px"><br><br>
+    <form method="POST" action="/register" class="form-signin">
+      <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+      <input id="email" type="email" name="email" placeholder="Email address" class="form-control" style="width: 150px" require autofocus>
+      <input id="password" type="password" name="password" placeholder="Password" style="width: 150px" class="form-control" required><br>
       <input type="submit" value="Register">
     </form>
   </body>
