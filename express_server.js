@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-// const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
 require('dotenv').config();
@@ -9,10 +8,9 @@ const PORT = 8080;
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
-// app.use(cookieParser());
 app.use(cookieSession({
   name: 'session',
-  secret: [process.env.SECRETKEY],
+  secret: process.env.SECRETKEY,
 }));
 
 function generateRandomString() {
@@ -24,6 +22,7 @@ function generateRandomString() {
   return random;
 }
 
+
 function getUserFromEmail(email) {
   for(let id in users) {
     if(users[id].email == email) {
@@ -32,6 +31,7 @@ function getUserFromEmail(email) {
   }
 }
 
+//returns object of subset of short url objects that are associated with the user's id
 function getURLsFromUserId(id) {
   let userURLs = {};
   for(let url in urlDatabase) {
@@ -40,6 +40,16 @@ function getURLsFromUserId(id) {
     }
   }
   return userURLs;
+}
+
+//checks urlDatabase for passed url. Returns the short URL if found. Otherwise returns an empty string
+function checkDatabaseForURL(url) {
+  for(let short in urlDatabase) {
+    if(urlDatabase[short].url === url) {
+      return short;
+    }
+  }
+  return '';
 }
 
 const users = {
@@ -67,7 +77,7 @@ let urlDatabase = {
 };
 
 app.get("/", (request, response) => {
-  response.send("Hello!");
+  response.redirect('/urls');
 });
 
 app.get("/urls", (request, response) => {
@@ -92,7 +102,7 @@ app.get("/urls/:id", (request, response) => {
   if(!users.hasOwnProperty(request.session.user_id)) {
     response.redirect('/login');
   }
-  const userURLs = getURLsFromUserId(users[request.session.user_id].id);
+  const userURLs = getURLsFromUserId(request.session.user_id);
   let templateVars = { shortURL: request.params.id, urls: userURLs, user: users[request.session.user_id]};
   if(userURLs[request.params.id]) {
     response.render("urls_show", templateVars);
@@ -102,10 +112,6 @@ app.get("/urls/:id", (request, response) => {
     response.render("urls_doesNotExist", templateVars);
   }
 });
-
-// app.get("/urls.json", (request, response) => {
-//   response.json(urlDatabase);
-// });
 
 app.get("/u/:shortURL", (request, response) => {
   if(urlDatabase[request.params.shortURL]) {
@@ -142,7 +148,12 @@ app.post("/urls/:id", (request, response) => {
 
 app.post("/urls", (request, response) => {
   if(request.body.longURL) {
-    let short = generateRandomString();
+    let short = checkDatabaseForURL(request.body.longURL);
+    if(short) {
+      response.redirect(`/urls/${short}`);
+      return;
+    }
+    short = generateRandomString();
     urlDatabase[short] = { user_id : users[request.session.user_id].id, url : request.body.longURL};
     response.redirect(`/urls/${short}`);
   }
