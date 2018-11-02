@@ -9,7 +9,7 @@
   <body>
     Short URL: <b><%=shortURL%></b>
     <form method="POST" action=<%=`/urls/${shortURL}`%>>
-      <input id="newURL" type="text" name="newURL" placeholder="http://" style="width: 300px">
+      <input id="newURL" type="text" name="newURL" placeholder=<%=urls[shortURL].url%> style="width: 300px">
       <input type="submit" value="Update">
     </form>
   </body>

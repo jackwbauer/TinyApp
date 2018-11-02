@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 // app.use(cookieParser());
 app.use(cookieSession({
   name: 'session',
-  keys: [process.env.SECRETKEY],
+  secret: [process.env.SECRETKEY],
 }));
 
 function generateRandomString() {
@@ -84,7 +84,7 @@ app.get("/urls/new", (request, response) => {
   if(users.hasOwnProperty(request.session.user_id)) {
     response.render("urls_new", templateVars);
   } else {
-    response.redirect('/login');
+    response.render('notLoggedIn', templateVars);
   }
 });
 
@@ -118,6 +118,10 @@ app.get("/u/:shortURL", (request, response) => {
 });
 
 app.get("/register", (request, response) => {
+  if(request.session.user_id) {
+    response.redirect('/urls');
+    return;
+  }
   response.render("register");
 });
 
@@ -140,7 +144,7 @@ app.post("/urls", (request, response) => {
   if(request.body.longURL) {
     let short = generateRandomString();
     urlDatabase[short] = { user_id : users[request.session.user_id].id, url : request.body.longURL};
-    response.redirect('/urls');
+    response.redirect(`/urls/${short}`);
   }
 });
 
