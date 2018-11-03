@@ -139,7 +139,13 @@ app.get("/urls/:id", (request, response) => {
 app.get("/u/:shortURL", (request, response) => {
   if(urlDatabase[request.params.shortURL]) {
     let longURL = urlDatabase[request.params.shortURL].url;
-    const visitor_id = request.session.user_id; //TODO also generate visitor_id session
+    let visitor_id = 0; //TODO also generate visitor_id session
+    if(!request.session.user_id) {
+      request.session.visitor_id = generateRandomString();
+      visitor_id = request.session.visitor_id;
+    } else {
+      visitor_id = request.session.user_id;
+    }
     urlDatabase[request.params.shortURL].visits.push({ visitor_id, timestamp : new Date() });
     response.redirect(longURL);
   } else {
@@ -180,7 +186,6 @@ app.post("/urls", (request, response) => {
     }
     short = generateRandomString();
     urlDatabase[short] = { user_id : users[request.session.user_id].id, url : request.body.longURL, visits : [] };
-    console.log(urlDatabase[short]);
     response.redirect(`/urls/${short}`);
   }
 });
